@@ -22,6 +22,8 @@ from launch.substitutions import Command, FindExecutable, LaunchConfiguration, P
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+from pathlib import Path
+
 
 def generate_launch_description():
     # Launch Arguments
@@ -84,7 +86,12 @@ def generate_launch_description():
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+         parameters=[{
+            'config_file': PathJoinSubstitution([
+                    FindPackageShare('gz_ros2_control_demos'),
+                    'config', 'bridge.yaml']),
+            'qos_overrides./tf_static.publisher.durability': 'transient_local',
+        }],
         output='screen'
     )
 
